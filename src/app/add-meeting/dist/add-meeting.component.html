@@ -1,0 +1,5 @@
+<div class="row m-5">
+    <div class="col-md-3 margin-bottom" *ngFor="let item of allRooms">
+        <mat-card [routerLink]="'view-schedules/'+item.id" [ngStyle]="{'color': getRandomColor()}">{{item.name}} -- Currently {{item.status}}</mat-card>
+    </div>
+</div>

@@ -1,0 +1,175 @@
+<ul class="breadcrumb">
+    <li><a href="#">Back To Add Meeting</a></li>
+    <li>Scheduled Meetings Of Room {{roomNo}}</li>
+</ul>
+<div class="col-md-12 text-center">
+    <button mat-raised-button color="primary" data-toggle="modal" data-target="#addNew">Add Meeting</button>
+</div>
+<div class="row mt-3 text-center">
+    <div class="col-md-4">
+        <div class="btn-group">
+            <div class="btn btn-primary" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="closeOpenMonthViewDay()">
+                Previous
+            </div>
+            <div class="btn btn-outline-secondary" mwlCalendarToday [(viewDate)]="viewDate">
+                Today
+            </div>
+            <div class="btn btn-primary" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="closeOpenMonthViewDay()">
+                Next
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+    </div>
+    <div class="col-md-4">
+        <div class="btn-group">
+            <div class="btn btn-primary" (click)="setView(CalendarView.Month)" [class.active]="view === CalendarView.Month">
+                Month
+            </div>
+            <div class="btn btn-primary" (click)="setView(CalendarView.Week)" [class.active]="view === CalendarView.Week">
+                Week
+            </div>
+            <div class="btn btn-primary" (click)="setView(CalendarView.Day)" [class.active]="view === CalendarView.Day">
+                Day
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div [ngSwitch]="view">
+    <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [viewDate]="viewDate" [events]="events" [refresh]="refresh" [activeDayIsOpen]="activeDayIsOpen" (dayClicked)="dayClicked($event.day)" (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)"></mwl-calendar-month-view>
+    <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week" [dayStartHour]="dayStartHour" [dayEndHour]="dayEndHour" [viewDate]="viewDate" [events]="events" [refresh]="refresh" (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
+    </mwl-calendar-week-view>
+    <mwl-calendar-day-view *ngSwitchCase="CalendarView.Day" [dayStartHour]="dayStartHour" [dayEndHour]="dayEndHour" [viewDate]="viewDate" [events]="events" [refresh]="refresh" (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
+    </mwl-calendar-day-view>
+</div>
+<br /><br /><br />
+<ng-template #modalContent let-close="close">
+    <div class="modal-header">
+        <h5 class="modal-title">Event action occurred</h5>
+        <button type="button" class="close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+        <div>
+            Action:
+            <pre>{{ modalData?.action }}</pre>
+        </div>
+        <div>
+            Event:
+            <pre>{{ modalData?.event | json }}</pre>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="close()">
+        OK
+      </button>
+    </div>
+</ng-template>
+<div class="modal" id="addNew">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Add Meeting Form</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 mt-3 text-center">
+                        <form [formGroup]="meetingForm">
+                            <mat-form-field appearance="fill">
+                                <mat-label>Name Of User</mat-label>
+                                <input matInput formControlName="name">
+                            </mat-form-field>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Meeting Agenda</mat-label>
+                                <input matInput formControlName="agenda">
+                            </mat-form-field>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Choose Meeting Date</mat-label>
+                                <input matInput [min]="minDate" [matDatepicker]="picker" [matDatepickerFilter]="myDateFilter" formControlName="date">
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Choose Start Time</mat-label>
+                                <mat-select formControlName="start_time">
+                                    <mat-option value="09:00 AM">09:00 AM</mat-option>
+                                    <mat-option value="09:30 AM">09:30 AM</mat-option>
+                                    <mat-option value="10:00 AM">10:00 AM</mat-option>
+                                    <mat-option value="10:30 AM">10:30 AM</mat-option>
+                                    <mat-option value="11:00 AM">11:00 AM</mat-option>
+                                    <mat-option value="11:30 AM">11:30 AM</mat-option>
+                                    <mat-option value="12:00 PM">12:00 PM</mat-option>
+                                    <mat-option value="12:30 PM">12:30 PM</mat-option>
+                                    <mat-option value="01:00 PM">01:00 PM</mat-option>
+                                    <mat-option value="01:30 PM">01:30 PM</mat-option>
+                                    <mat-option value="02:00 PM">02:00 PM</mat-option>
+                                    <mat-option value="02:30 PM">02:30 PM</mat-option>
+                                    <mat-option value="03:00 PM">03:00 PM</mat-option>
+                                    <mat-option value="03:30 PM">03:30 PM</mat-option>
+                                    <mat-option value="04:00 PM">04:00 PM</mat-option>
+                                    <mat-option value="04:30 PM">04:30 PM</mat-option>
+                                    <mat-option value="05:00 PM">05:00 PM</mat-option>
+                                    <mat-option value="05:30 PM">05:30 PM</mat-option>
+                                    <mat-option value="06:00 PM">06:00 PM</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Choose End Time</mat-label>
+                                <mat-select formControlName="end_time">
+                                    <mat-option value="09:00 AM">09:00 AM</mat-option>
+                                    <mat-option value="09:30 AM">09:30 AM</mat-option>
+                                    <mat-option value="10:00 AM">10:00 AM</mat-option>
+                                    <mat-option value="10:30 AM">10:30 AM</mat-option>
+                                    <mat-option value="11:00 AM">11:00 AM</mat-option>
+                                    <mat-option value="11:30 AM">11:30 AM</mat-option>
+                                    <mat-option value="12:00 PM">12:00 PM</mat-option>
+                                    <mat-option value="12:30 PM">12:30 PM</mat-option>
+                                    <mat-option value="01:00 PM">01:00 PM</mat-option>
+                                    <mat-option value="01:30 PM">01:30 PM</mat-option>
+                                    <mat-option value="02:00 PM">02:00 PM</mat-option>
+                                    <mat-option value="02:30 PM">02:30 PM</mat-option>
+                                    <mat-option value="03:00 PM">03:00 PM</mat-option>
+                                    <mat-option value="03:30 PM">03:30 PM</mat-option>
+                                    <mat-option value="04:00 PM">04:00 PM</mat-option>
+                                    <mat-option value="04:30 PM">04:30 PM</mat-option>
+                                    <mat-option value="05:00 PM">05:00 PM</mat-option>
+                                    <mat-option value="05:30 PM">05:30 PM</mat-option>
+                                    <mat-option value="06:00 PM">06:00 PM</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <!-- <mat-form-field appearance="fill">
+                                <mat-label>Rooms</mat-label>
+                                <mat-select formControlName="room_id" dia>
+                                    <mat-option value="1">Room 1</mat-option>
+                                    <mat-option value="2">Room 2</mat-option>
+                                    <mat-option value="3">Room 3</mat-option>
+                                    <mat-option value="4">Room 4</mat-option>
+                                    <mat-option value="5">Room 5</mat-option>
+                                    <mat-option value="6">Room 6</mat-option>
+                                    <mat-option value="7">Room 7</mat-option>
+                                    <mat-option value="8">Room 8</mat-option>
+                                    <mat-option value="9">Room 9</mat-option>
+                                    <mat-option value="10">Room 10</mat-option>
+                                </mat-select>
+                            </mat-form-field> -->
+                            <button mat-raised-button color="primary" (click)="addNewMeeting()">Add Meeting</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+            </div>
+
+        </div>
+    </div>
+</div>
